@@ -72,7 +72,7 @@ func generateImage(prompt string, cmd *slack.SlashCommand, bucket string) {
 
 	// Post message to slack webhook response.
 	titleBlock := slack.NewTextBlockObject(slack.PlainTextType, prompt, false, false)
-	imageBlock := slack.NewImageBlock(publicUrl, prompt, "image1", titleBlock)
+	imageBlock := slack.NewImageBlock(publicUrl, fmt.Sprintf("%s: %s", cmd.UserName, prompt), "image1", titleBlock)
 	blocks := slack.Blocks{BlockSet: []slack.Block{imageBlock}}
 	msg := slack.WebhookMessage{Blocks: &blocks, ResponseType: slack.ResponseTypeInChannel}
 	if sendToSlack {
@@ -91,7 +91,7 @@ func completeText(prompt string, cmd *slack.SlashCommand) {
 	}
 
 	// Post message to slack webhook response.
-	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(">%s\n%s", prompt, res.Choices[0].Text), false, false)
+	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("> <@%s>%s\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
 	section := slack.NewSectionBlock(textBlock, nil, nil)
 	blocks := slack.Blocks{BlockSet: []slack.Block{section}}
 	msg := slack.WebhookMessage{Blocks: &blocks, ResponseType: slack.ResponseTypeInChannel}
@@ -111,7 +111,7 @@ func completeCode(prompt string, cmd *slack.SlashCommand) {
 	}
 
 	// Post message to slack webhook response.
-	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf(">%s\n%s", prompt, res.Choices[0].Text), false, false)
+	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("> > <@%s>%s\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
 	section := slack.NewSectionBlock(textBlock, nil, nil)
 	blocks := slack.Blocks{BlockSet: []slack.Block{section}}
 	msg := slack.WebhookMessage{Blocks: &blocks, ResponseType: slack.ResponseTypeInChannel}
@@ -131,7 +131,6 @@ func handleSlackCommand(w http.ResponseWriter, req *http.Request) {
 	cmd := slashCommand.Text
 	logger.Info().Msgf("Received slack command: %v", cmd)
 
-	// Non timesheet related commands.
 	if strings.HasPrefix(cmd, "dalle") {
 		prompt := strings.TrimSpace(strings.TrimPrefix(cmd, "dalle"))
 		go generateImage(prompt, &slashCommand, gcsBucket)
