@@ -104,7 +104,7 @@ func completeText(prompt string, cmd *slack.SlashCommand) {
 }
 
 func completeCode(prompt string, cmd *slack.SlashCommand) {
-	res, err := openAI.CompleteText(prompt, openai.MODEL_CODEX_DAVINCI, rand.Float32(), 256)
+	res, err := openAI.CompleteText(prompt, openai.MODEL_CODEX_DAVINCI, 0.1, 256)
 	if err != nil {
 		logger.Error().Msgf("Error requesting text completion: %v", err)
 		return
