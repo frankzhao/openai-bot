@@ -104,14 +104,14 @@ func completeText(prompt string, cmd *slack.SlashCommand) {
 }
 
 func completeCode(prompt string, cmd *slack.SlashCommand) {
-	res, err := openAI.CompleteText(prompt, openai.MODEL_CODEX_DAVINCI, 0.1, 256)
+	res, err := openAI.CompleteText(prompt, openai.MODEL_CODEX_DAVINCI, 0, 256)
 	if err != nil {
 		logger.Error().Msgf("Error requesting text completion: %v", err)
 		return
 	}
 
 	// Post message to slack webhook response.
-	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("> > <@%s>%s\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
+	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("```<@%s>%s```\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
 	section := slack.NewSectionBlock(textBlock, nil, nil)
 	blocks := slack.Blocks{BlockSet: []slack.Block{section}}
 	msg := slack.WebhookMessage{Blocks: &blocks, ResponseType: slack.ResponseTypeInChannel}
