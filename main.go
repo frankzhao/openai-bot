@@ -91,7 +91,7 @@ func completeText(prompt string, cmd *slack.SlashCommand) {
 	}
 
 	// Post message to slack webhook response.
-	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("> <@%s>%s\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
+	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("> <@%s> %s\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
 	section := slack.NewSectionBlock(textBlock, nil, nil)
 	blocks := slack.Blocks{BlockSet: []slack.Block{section}}
 	msg := slack.WebhookMessage{Blocks: &blocks, ResponseType: slack.ResponseTypeInChannel}
@@ -111,7 +111,7 @@ func completeCode(prompt string, cmd *slack.SlashCommand) {
 	}
 
 	// Post message to slack webhook response.
-	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("<@%s>\n```%s```\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
+	textBlock := slack.NewTextBlockObject(slack.MarkdownType, fmt.Sprintf("<@%s> \n```%s```\n%s", cmd.UserID, prompt, res.Choices[0].Text), false, false)
 	section := slack.NewSectionBlock(textBlock, nil, nil)
 	blocks := slack.Blocks{BlockSet: []slack.Block{section}}
 	msg := slack.WebhookMessage{Blocks: &blocks, ResponseType: slack.ResponseTypeInChannel}
